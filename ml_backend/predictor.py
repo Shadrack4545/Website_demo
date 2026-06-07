@@ -1,10 +1,13 @@
-"""
-Predictor Module
-Loads trained model and makes predictions
+"""Predictor Module
+Loads trained model and makes predictions.
+Provides improved diagnostics when initialization fails (prints traceback)
+and supports overriding model/metadata paths via environment variables.
 """
 
+import os
 import pickle
 import json
+import traceback
 import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -18,38 +21,46 @@ class AttendancePredictor:
     def __init__(self, model_path: Optional[str] = None,
                  metadata_path: Optional[str] = None,
                  importance_path: Optional[str] = None):
-        model_path = model_path or str(BASE_DIR / 'trained_model.pkl')
-        metadata_path = metadata_path or str(BASE_DIR / 'model_metadata.json')
-        importance_path = importance_path or str(BASE_DIR / 'feature_importance.json')
+        # Allow environment variable overrides for deployment flexibility
+        model_path = model_path or os.getenv('MODEL_PATH') or str(BASE_DIR / 'trained_model.pkl')
+        metadata_path = metadata_path or os.getenv('METADATA_PATH') or str(BASE_DIR / 'model_metadata.json')
+        importance_path = importance_path or os.getenv('IMPORTANCE_PATH') or str(BASE_DIR / 'feature_importance.json')
+
         """Initialize predictor with trained model"""
         self.model = None
         self.metadata = None
         self.feature_importance = None
-        
-        # Load model
+
+        # Load model (fatal if it fails)
         try:
+            print(f"Attempting to load model from: {model_path}")
             with open(model_path, 'rb') as f:
                 self.model = pickle.load(f)
             print(f"Loaded model from {model_path}")
         except Exception as e:
-            print(f"Error loading model: {e}")
+            print(f"Error loading model from {model_path}: {e}")
+            traceback.print_exc()
             raise
-        
-        # Load metadata
+
+        # Load metadata (non-fatal)
         try:
+            print(f"Attempting to load metadata from: {metadata_path}")
             with open(metadata_path, 'r') as f:
                 self.metadata = json.load(f)
             print(f"Loaded metadata from {metadata_path}")
         except Exception as e:
-            print(f"Error loading metadata: {e}")
-        
-        # Load feature importance
+            print(f"Error loading metadata from {metadata_path}: {e}")
+            traceback.print_exc()
+
+        # Load feature importance (non-fatal)
         try:
+            print(f"Attempting to load feature importance from: {importance_path}")
             with open(importance_path, 'r') as f:
                 self.feature_importance = json.load(f)
             print(f"Loaded feature importance from {importance_path}")
         except Exception as e:
-            print(f"Error loading feature importance: {e}")
+            print(f"Error loading feature importance from {importance_path}: {e}")
+            traceback.print_exc()
     
     def predict_single(self, features: np.ndarray) -> Dict:
         """
