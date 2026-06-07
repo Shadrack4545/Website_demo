@@ -1,0 +1,44 @@
+Members can add profile pictures
+There should be a section to show current the profiles of current administratives and their contains
+Section to show the achievements of the association.
+section to celebrate the achievements of individual personnels
+Through the site people should be able to send request to group chat and admin should have the opportunity to verify them before adding them
+Also we spend in rubles not in dollars
+Aslo the when I switch the language some parrt of the english still staysin english and others in russian but everything should change completely
+admin should admin should have the ability to remove other suspicious members  upon knowing supecting them or not qualifying to be part of the group
+Admin or leaders should be able to see the progress of active members on the site and how often people viist the site.
+Non member should be able to searc this site  and some general information events as a normal but would  not have the priveledge that the members of the comunity have
+Everybody in th world should be able to search for this site upon entering the correct url or address and know about this community in vladivostok
+=======================================================================================================================================================================================
+
+
+
+New Ideas
+-----------------
+Continue from where we stop.
+Make the name "African students in  vladivostok"
+when I open a particular page there is no option for me to go back to the previous page I was before I entered that page lets fix this  one
+Event attendance preditor
+===================================================================
+
+Dark and bright mode
+collect members passport renewing and expiring <i class="fa fa-database" aria-hidden="true"></i>
+Genaral Medical examination date check up
+I want members to be able to view their profile picture in full also a session where another member can view the profile picture of the another member since it is a community
+When I create event as an admin it doesn't appear at the wecome page for everyone to see before logging in
+Admin should be able to go back to edit events or achievements that they have alread posted on the platform.
+Also the event and achievements session should be advance such that we can upoload pictures videos of the individuals the awards received and all other advance elements you can add to these session base on reall world dunctional webpages
+The group chat idea is not that clear to me now.Members suggest group chat ideas or what ? because for our association we have what groups, telegram chat, max chat so this do you think this chat session on this platform should be about?
+Looking ate the platform what use is the group chat here?
+What is the idea of the resources here? what use is it of in this 
+finances as well how do people suppoert the community financially though the platform?
+cards inside the finances page is not clear to me.How does balance appear there is it going to show the balance of money the association is having? or what income and expenses as well what are they doing?
+Mini_market for the association.
+Administartive priveledge:Some features should only be available to admins and leaders.which functions should be available to them then?
+Who can make who and admin?
+who can give leaders priveledges and also remove priveledge from people?
+common members should have their priviledges
+
+
+
+

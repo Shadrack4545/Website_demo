@@ -1,0 +1,4 @@
+event_id,event_title,event_date,event_type,has_incentive,incentive_type,expected_attendees,lead_time_days
+E001,African Day Celebration,2026-05-24,Social and Cultural,1,Food and Drinks,75,12
+E002,Students Day Celebration,2025-12-19,Community Event,0,None,80,19
+E003,Movie Night,2025-12-05,Entertainment,1,Snacks and Drinks,50,26

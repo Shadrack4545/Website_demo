@@ -1,0 +1,380 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  :root {
+    /* Page gradient color variables — will animate smoothly when theme changes */
+    --bg-from: #f8fafc; /* light slate-50 */
+    --bg-to: #eef2ff; /* light purple */
+  }
+
+  html {
+    /* Smooth transitions for theme changes */
+    transition: background-color 450ms ease-in-out, color 450ms ease-in-out, border-color 450ms ease-in-out, box-shadow 450ms ease-in-out;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900;
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
+  }
+
+  html.dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
+
+  /* Dark theme variable overrides */
+  html.dark {
+    --bg-from: #0f172a; /* slate-900 */
+    --bg-to: #0b1220; /* slightly different dark */
+  }
+
+  h1 {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  html.dark h1 {
+    @apply text-gray-100;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold text-gray-900;
+  }
+
+  html.dark h2 {
+    @apply text-gray-100;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-gray-900;
+  }
+
+  html.dark h3 {
+    @apply text-gray-100;
+  }
+}
+
+/* Custom component utilities */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed;
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out, box-shadow 250ms ease-in-out;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-900 font-medium rounded-lg hover:bg-gray-300;
+    transition: background-color 300ms ease-in-out, color 300ms ease-in-out, border-color 300ms ease-in-out;
+  }
+
+  html.dark .btn-secondary {
+    @apply bg-gray-700 text-gray-100 hover:bg-gray-600;
+  }
+
+  .btn-small {
+    @apply px-3 py-1 text-sm font-medium rounded-lg;
+    transition: background-color 250ms ease-in-out, color 250ms ease-in-out, transform 200ms ease-in-out;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md p-4 hover:shadow-lg;
+    transition: background-color 300ms ease-in-out, box-shadow 250ms ease-in-out, border-color 300ms ease-in-out;
+  }
+
+  html.dark .card {
+    @apply bg-gray-800 shadow-gray-900/50 border border-gray-700;
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent bg-white text-gray-900;
+  }
+
+  html.dark .input-field {
+    @apply bg-gray-800 border-gray-600 text-gray-100 placeholder-gray-400;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  html.dark .form-label {
+    @apply text-gray-300;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-800;
+  }
+
+  html.dark .badge-primary {
+    @apply bg-primary-900/50 text-primary-200;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 text-green-800;
+  }
+
+  html.dark .badge-success {
+    @apply bg-green-900/40 text-green-300;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-800;
+  }
+
+  html.dark .badge-warning {
+    @apply bg-yellow-900/40 text-yellow-300;
+  }
+
+  .badge-error {
+    @apply badge bg-red-100 text-red-800;
+  }
+
+  html.dark .badge-error {
+    @apply bg-red-900/40 text-red-300;
+  }
+}
+
+/* Page gradient helper that uses CSS variables so gradient changes animate smoothly */
+@layer utilities {
+  .page-gradient {
+    background-image: linear-gradient(135deg, var(--bg-from), var(--bg-to));
+    background-repeat: no-repeat;
+    transition: background 480ms ease-in-out, background-color 480ms ease-in-out;
+  }
+}
+
+/* Overlay fade used for theme crossfade */
+.theme-fade-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-from);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 420ms ease-in-out;
+  z-index: 9998;
+}
+
+html.theme-fade-active .theme-fade-overlay {
+  opacity: 1;
+}
+
+/* Utility to ensure the overlay matches dark/light by using the to color as well */
+.theme-fade-overlay.dark {
+  background: var(--bg-to);
+}
+
+/* Dark mode: common surface utilities used across pages */
+@layer utilities {
+  html.dark .bg-white {
+    @apply !bg-gray-800;
+  }
+
+  html.dark .bg-gray-50 {
+    @apply !bg-gray-900;
+  }
+
+  html.dark .bg-gray-100 {
+    @apply !bg-gray-800;
+  }
+
+  html.dark .bg-slate-50 {
+    @apply !bg-gray-900;
+  }
+
+  html.dark .bg-slate-100 {
+    @apply !bg-gray-800;
+  }
+
+  html.dark .text-gray-900 {
+    @apply !text-gray-100;
+  }
+
+  html.dark .text-gray-800 {
+    @apply !text-gray-200;
+  }
+
+  html.dark .text-gray-700 {
+    @apply !text-gray-300;
+  }
+
+  html.dark .text-gray-600 {
+    @apply !text-gray-400;
+  }
+
+  html.dark .text-slate-900 {
+    @apply !text-gray-100;
+  }
+
+  html.dark .text-slate-700 {
+    @apply !text-gray-300;
+  }
+
+  html.dark .text-slate-600 {
+    @apply !text-gray-400;
+  }
+
+  html.dark .text-slate-500 {
+    @apply !text-gray-500;
+  }
+
+  html.dark .border-gray-200 {
+    @apply !border-gray-700;
+  }
+
+  html.dark .border-gray-100 {
+    @apply !border-gray-700;
+  }
+
+  html.dark .border-gray-300 {
+    @apply !border-gray-600;
+  }
+
+  html.dark .border-slate-200 {
+    @apply !border-gray-700;
+  }
+
+  html.dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+    @apply !border-gray-700;
+  }
+
+  html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+    @apply !border-gray-700;
+  }
+
+  html.dark .hover\:bg-gray-50:hover {
+    @apply !bg-gray-700;
+  }
+
+  html.dark .hover\:bg-gray-100:hover {
+    @apply !bg-gray-700;
+  }
+
+  html.dark .hover\:bg-slate-50:hover {
+    @apply !bg-gray-700;
+  }
+
+  html.dark .shadow-md {
+    @apply shadow-gray-900/40;
+  }
+
+  html.dark .shadow-sm {
+    @apply shadow-gray-900/30;
+  }
+
+  html.dark .shadow-xl {
+    @apply shadow-gray-900/50;
+  }
+
+  /* Tinted info panels */
+  html.dark .bg-blue-50 {
+    @apply !bg-blue-950/40;
+  }
+
+  html.dark .bg-green-50 {
+    @apply !bg-green-950/40;
+  }
+
+  html.dark .bg-amber-50 {
+    @apply !bg-amber-950/40;
+  }
+
+  html.dark .bg-red-50 {
+    @apply !bg-red-950/40;
+  }
+
+  html.dark .bg-purple-50 {
+    @apply !bg-purple-950/40;
+  }
+
+  html.dark .bg-orange-50 {
+    @apply !bg-orange-950/40;
+  }
+
+  html.dark .border-blue-200 {
+    @apply !border-blue-800;
+  }
+
+  html.dark .border-green-200 {
+    @apply !border-green-800;
+  }
+
+  html.dark .border-amber-200,
+  html.dark .border-amber-300 {
+    @apply !border-amber-800;
+  }
+
+  html.dark .border-red-200 {
+    @apply !border-red-800;
+  }
+
+  html.dark .border-purple-200 {
+    @apply !border-purple-800;
+  }
+
+  html.dark .text-blue-900,
+  html.dark .text-blue-800,
+  html.dark .text-blue-700 {
+    @apply !text-blue-300;
+  }
+
+  html.dark .text-green-900,
+  html.dark .text-green-800,
+  html.dark .text-green-700 {
+    @apply !text-green-300;
+  }
+
+  html.dark .text-amber-900,
+  html.dark .text-amber-800,
+  html.dark .text-amber-700 {
+    @apply !text-amber-300;
+  }
+
+  html.dark .text-red-900,
+  html.dark .text-red-800,
+  html.dark .text-red-700 {
+    @apply !text-red-300;
+  }
+
+  html.dark .text-purple-900,
+  html.dark .text-purple-800,
+  html.dark .text-purple-700 {
+    @apply !text-purple-300;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-in-out;
+}

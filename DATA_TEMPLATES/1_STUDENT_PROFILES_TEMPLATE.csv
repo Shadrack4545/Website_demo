@@ -1,0 +1,30 @@
+student_id,first_name,last_name,country,program,academic_load,previous_attendance_rate
+S001,Ahmad,Fahmy,Egypt,General Medicine,5,0.85
+S002,Elijah,Okafor,Nigeria,General Medicine,6,0.90
+S003,Julia,Johnes,Namibia,General Medicine,4,0.65
+S004,Ester,Mensah,Madagascar,Public Health,4,0.75
+S005,Amarachi,Nwosu,Nigeria,Public Health,4,0.88
+S006,Lucky,Onyeka,Nigeria,Computer Science,2,0.80
+S007,Blessing,Agyeiwaa,Ghana,General Medicine,5,0.78
+S008,Thandiwie,Banda,Zambia,Psychology,4,0.92
+S009,Terence,Chikaonda,Zimbabwe,Pharmacy,4,0.82
+S010,Israella,Adebayo,Nigeria,General Medicine,6,0.35
+S011,Memory,Kaonga,Malawi,General Medicine,5,0.55
+S012,Noxy,Dlamini,South Africa,Dentistry,5,0.60
+S013,Abraham,Lungu,Zambia,Computer Science,6,0.15
+S014,Shadrack,Owusu,Ghana,Computer Science,6,0.25
+S015,Christiana,Umeah,Nigeria,General Medicine,6,0.72
+S016,Eugenia,Senghor,Botswana,General Medicine,5,0.68
+S017,Elihu,Mwansa,Zambia,Medical Biophysics,6,0.28
+S018,Geeka,Conteh,Sierra Leone,Public Health,6,0.95
+S019,James,Matlala,Mozambique,Surgery,6,0.15
+S020,Joab,Alloyce,Kenya,Computer Science,5,0.48
+S021,Kwame,Mensah,Togo,Chemistry,6,0.58
+S022,Samuel,Hosi,Ghana,Public Health,6,0.50
+S023,Yakubu,Diallo,Mali,Chemistry,5,0.62
+S024,Fitia,Ravalomanana,Madagascar,General Medicine,6,0.75
+S025,Adel,Ibrahim,South Sudan,Engineering,5,0.32
+S026,Ikram,Hassan,Egypt,General Medicine,4,0.70
+S027,Victor,Simasiku,Zambia,International Relations,5,0.40
+S028,Bredon,Makanza,Zimbabwe,General Medicine,5,0.30
+S029,Kamara,Ba,Togo,Information Technology,5,0.52

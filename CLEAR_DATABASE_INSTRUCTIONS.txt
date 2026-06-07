@@ -1,0 +1,171 @@
+🗑️ DATABASE CLEAR INSTRUCTIONS - COMPLETE FRESH START
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ WARNING: This removes ALL accounts, events, and application data
+
+═══════════════════════════════════════════════════════════════════
+
+WHAT GETS DELETED:
+✅ All user accounts
+✅ All events
+✅ All announcements
+✅ All chat messages
+✅ Current login session
+✅ All application data
+
+═══════════════════════════════════════════════════════════════════
+
+HOW TO CLEAR - METHOD 1: BROWSER CONSOLE (RECOMMENDED)
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: Open Application
+  → Open http://localhost:5173 in browser
+
+STEP 2: Open DevTools
+  → Press F12 (or Ctrl+Shift+I on Windows/Linux)
+  → Click "Console" tab
+
+STEP 3: Paste This Code
+  Copy everything below and paste into console:
+
+─────────────────────────────────────────────────────────────────
+
+function clearDatabase() {
+  console.clear();
+  console.log('%c🗑️  CLEARING ALL DATABASE...', 'color: red; font-size: 16px; font-weight: bold;');
+  
+  const STORAGE_KEYS = {
+    CURRENT_USER: 'currentUser',
+    USERS: 'users',
+    EVENTS: 'events',
+    ANNOUNCEMENTS: 'announcements',
+    DIRECTORY_MEMBERS: 'directoryMembers',
+    NOTIFICATIONS: 'notifications',
+    SESSION: 'session',
+    RESOURCES: 'resources',
+    QUESTIONS: 'questions',
+    FINANCE_ENTRIES: 'financeEntries',
+    DOCUMENTS: 'documents',
+    ROLE_REQUESTS: 'roleRequests',
+  };
+  
+  let clearedCount = 0;
+  Object.values(STORAGE_KEYS).forEach((key) => {
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+      console.log(`✅ Cleared: ${key}`);
+      clearedCount++;
+    }
+  });
+  
+  sessionStorage.clear();
+  console.log(`✨ SUCCESS! Cleared ${clearedCount} items`);
+  console.log('🔄 Refreshing page in 2 seconds...');
+  
+  setTimeout(() => window.location.reload(), 2000);
+}
+
+clearDatabase();
+
+─────────────────────────────────────────────────────────────────
+
+STEP 4: Press Enter
+  → Code executes automatically
+  → Page refreshes to login screen
+  → Database is clean! ✨
+
+═══════════════════════════════════════════════════════════════════
+
+HOW TO CLEAR - METHOD 2: QUICK ONE-LINER
+═══════════════════════════════════════════════════════════════════
+
+Paste this in console:
+
+Object.keys(localStorage).forEach(k => localStorage.removeItem(k)); 
+sessionStorage.clear(); 
+setTimeout(() => location.reload(), 500);
+
+═══════════════════════════════════════════════════════════════════
+
+AFTER CLEARING - FRESH START GUIDE
+═══════════════════════════════════════════════════════════════════
+
+1. ✅ Create Admin Account
+   → Click "Sign Up"
+   → Enter: Name, Email, Password
+   → Make sure Role = Admin (if available)
+   → Register
+
+2. ✅ Access Admin Features
+   → You should see 🌱 Seed Data in sidebar (admin-only)
+
+3. ✅ Seed Test Events
+   → Click 🌱 Seed Data
+   → Click "Populate Test Events"
+   → Success! 3 events created
+
+4. ✅ View ML Predictions
+   → Go to 🔮 Predictions
+   → Select each event
+   → See predictions for 29 students
+
+5. ✅ Test Member Access
+   → Log out
+   → Create new member account
+   → Verify 🌱 Seed Data is NOT visible (admin-only)
+   → View predictions as member
+
+═══════════════════════════════════════════════════════════════════
+
+VERIFICATION - Check If Cleared Successfully
+═══════════════════════════════════════════════════════════════════
+
+1. Open DevTools (F12)
+2. Go to "Application" tab
+3. Click "Local Storage"
+4. Select "http://localhost:5173"
+5. Result should be: EMPTY (no items listed)
+
+If you see data, run clearDatabase() again.
+
+═══════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════
+
+❌ "clearDatabase is not defined"
+→ Make sure you copied the entire function including:
+  function clearDatabase() { ... }
+
+❌ "localStorage still has data"
+→ Run clearDatabase() again
+→ Or manually delete in Application tab:
+  Right-click item → Delete
+
+❌ "Page won't refresh"
+→ Press F5 manually to refresh
+→ Or close and reopen the tab
+
+═══════════════════════════════════════════════════════════════════
+
+QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════
+
+Browser Console Steps:
+  1. F12 → Console tab
+  2. Paste clearDatabase function
+  3. Type: clearDatabase()
+  4. Press Enter
+  5. Wait for refresh
+
+Ready for Demo:
+  1. clearDatabase()
+  2. Create admin account
+  3. Click 🌱 Seed Data
+  4. Click "Populate Test Events"
+  5. Go to 🔮 Predictions
+  6. Show demo to supervisor! 🎓
+
+═══════════════════════════════════════════════════════════════════
+

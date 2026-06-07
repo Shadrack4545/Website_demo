@@ -1,0 +1,10 @@
+{
+  "previous_attendance_rate": 0.09255564212799072,
+  "academic_load": 0.24575217068195343,
+  "has_incentive": 0.023906221613287926,
+  "event_type_encoded": 0.02997194044291973,
+  "rsvp_status_encoded": 0.6078140139579773,
+  "lead_time_days": 0.0,
+  "day_of_week": 0.0,
+  "is_evening_event": 0.0
+}
