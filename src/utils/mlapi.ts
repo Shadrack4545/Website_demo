@@ -28,7 +28,15 @@ import type { Event, RSVPStatus } from '@/types';
 
 // Use runtime environment variable when provided (set VITE_ML_API_URL for production),
 // otherwise fall back to the dev proxy path `/api`.
-const FLASK_API_BASE_URL = (import.meta as any).env?.VITE_ML_API_URL || '/api';
+// Normalize runtime URL: if the deploy-time `VITE_ML_API_URL` is provided as
+// the root origin (e.g. `https://website-backend-demo.onrender.com`), make
+// sure it includes the `/api` suffix so endpoints resolve to `/api/<route>`.
+const rawBase = (import.meta as any).env?.VITE_ML_API_URL;
+let FLASK_API_BASE_URL = '/api';
+if (rawBase && typeof rawBase === 'string' && rawBase.trim().length > 0) {
+  const trimmed = rawBase.trim().replace(/\/+$/g, '');
+  FLASK_API_BASE_URL = trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+}
 const API_TIMEOUT_MS = 30000; // 30 second timeout
 
 /**
