@@ -374,13 +374,35 @@ async function makeRequest<T>(
 
     const response = await fetch(url, options);
 
+    // Read body as text first to avoid unhandled JSON parse errors
+    const bodyText = await response.text().catch(() => '');
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new MLAPIError(response.status, endpoint, errorData.message || response.statusText);
+      let errorMessage = response.statusText;
+      try {
+        const errObj = bodyText ? JSON.parse(bodyText) : {};
+        errorMessage = errObj.message || errObj.error || errorMessage;
+      } catch (e) {
+        // leave errorMessage as-is and include raw body in logs
+      }
+      console.error(`ML API responded with error (${response.status}):`, bodyText);
+      throw new MLAPIError(response.status, endpoint, errorMessage || response.statusText);
     }
 
-    const data = await response.json();
-    return data as T;
+    if (!bodyText) {
+      // No body to parse
+      console.warn(`ML API returned empty body for ${endpoint}`);
+      // Return an empty object cast to T to avoid downstream JSON parse errors
+      return {} as T;
+    }
+
+    try {
+      const data = JSON.parse(bodyText);
+      return data as T;
+    } catch (err) {
+      console.error('Failed to parse JSON response from ML API:', err, 'body:', bodyText);
+      throw err;
+    }
   } catch (error) {
     if (error instanceof MLAPIError) {
       throw error;
