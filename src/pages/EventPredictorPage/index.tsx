@@ -9,6 +9,7 @@ import { batchPredictAttendance, isMLBackendAvailable } from '@/utils/mlapi';
 import type { BatchPredictionResponse, SinglePrediction } from '@/types/predictor';
 import { useEvents } from '@/hooks/useContext';
 import { getMLStudentProfiles } from '@/utils/mockData';
+import { getDemoRsvpsForEvent } from '@/utils/communityStudents';
 
 type TabType = 'predictions' | 'analytics' | 'features';
 
@@ -53,8 +54,14 @@ const EventPredictorPage: React.FC = () => {
           return;
         }
 
+        // Use event's RSVPs, or fall back to demo RSVPs if event has none
+        let eventRsvps = selectedEvent.rsvps;
+        if (!eventRsvps || Object.keys(eventRsvps).length === 0) {
+          eventRsvps = getDemoRsvpsForEvent(selectedEvent.title);
+        }
+
         const studentList = allStudents.filter((student) => {
-          const status = selectedEvent.rsvps?.[student.id];
+          const status = eventRsvps?.[student.id];
           return status === 'attending' || status === 'maybe';
         });
 
@@ -81,7 +88,7 @@ const EventPredictorPage: React.FC = () => {
             },
           },
           selectedEvent,
-          selectedEvent.rsvps
+          eventRsvps
         );
 
         const source = response.batchPrediction?.source ?? 'xgboost';
