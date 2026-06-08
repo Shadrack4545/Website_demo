@@ -28,14 +28,15 @@ const PredictionDashboard: React.FC<PredictionDashboardProps> = ({
   const { t } = useTranslation();
   const [sortBy, setSortBy] = useState<'probability' | 'name'>('probability');
   const [filterConfidence, setFilterConfidence] = useState<'all' | 'high' | 'medium' | 'low'>('all');
-  const studentNames = Object.fromEntries(
-    getMLStudentProfiles().map((s) => [s.id, s.name])
-  );
+  const mlProfiles = getMLStudentProfiles() ?? [];
+  const studentNames = Object.fromEntries(mlProfiles.map((s) => [s.id, s.name]));
 
   /**
    * Filter predictions based on confidence level
    */
-  const filteredPredictions = predictions.filter(p => {
+  const safePredictions = predictions ?? [];
+
+  const filteredPredictions = safePredictions.filter(p => {
     if (filterConfidence === 'all') return true;
     if (filterConfidence === 'high') return p.confidence >= 0.7;
     if (filterConfidence === 'medium') return p.confidence >= 0.5 && p.confidence < 0.7;
@@ -58,14 +59,14 @@ const PredictionDashboard: React.FC<PredictionDashboardProps> = ({
    * Calculate statistics
    */
   const stats = {
-    totalStudents: predictions.length,
+    totalStudents: safePredictions.length,
     predictedAttendees: Math.round(batchResponse?.batchPrediction?.predictedTotalAttendance || 0),
-    averageConfidence: predictions.length > 0
-      ? (predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length)
+    averageConfidence: safePredictions.length > 0
+      ? (safePredictions.reduce((sum, p) => sum + p.confidence, 0) / safePredictions.length)
       : 0,
     attendanceRate: batchResponse?.batchPrediction?.predictedAttendanceRate || 0,
-    highConfidenceCount: predictions.filter(p => p.confidence >= 0.7).length,
-    lowConfidenceCount: predictions.filter(p => p.confidence < 0.5).length
+    highConfidenceCount: safePredictions.filter(p => p.confidence >= 0.7).length,
+    lowConfidenceCount: safePredictions.filter(p => p.confidence < 0.5).length
   };
 
   /**
