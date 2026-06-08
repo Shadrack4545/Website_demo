@@ -360,8 +360,12 @@ async function makeRequest<T>(
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
 
+  // declare options in outer scope so fallback attempts in the catch block
+  // can reuse the same request options when trying a site-relative `/api`.
+  let options: RequestInit | undefined;
+
   try {
-    const options: RequestInit = {
+    options = {
       method,
       headers: {
         'Content-Type': 'application/json',
