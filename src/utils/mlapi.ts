@@ -26,8 +26,9 @@ import type { Event, RSVPStatus } from '@/types';
 // API CONFIGURATION
 // ============================================================================
 
-// Proxied to Flask (localhost:5000) via vite.config.ts in dev
-const FLASK_API_BASE_URL = '/api';
+// Use runtime environment variable when provided (set VITE_ML_API_URL for production),
+// otherwise fall back to the dev proxy path `/api`.
+const FLASK_API_BASE_URL = (import.meta as any).env?.VITE_ML_API_URL || '/api';
 const API_TIMEOUT_MS = 30000; // 30 second timeout
 
 /**
