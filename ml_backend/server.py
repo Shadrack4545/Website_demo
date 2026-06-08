@@ -8,12 +8,24 @@ from flask_cors import CORS
 import numpy as np
 from typing import Dict, List
 import json
+import os
 
 from predictor import AttendancePredictor
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+
+# Enable CORS with explicit configuration to handle preflight requests
+CORS(app, 
+     origins=["https://website-frontend-demo.onrender.com", "http://localhost:5173", "http://localhost:3000"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization"],
+     supports_credentials=True,
+     max_age=3600)
+
+# Alternative: allow all origins (less secure but works for demo)
+if os.getenv('ALLOW_ALL_CORS', 'false').lower() == 'true':
+    CORS(app)
 
 # Initialize predictor
 predictor = None
@@ -37,7 +49,7 @@ if not init_predictor():
 # HEALTH & INFO ENDPOINTS
 # ============================================================================
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/api/health', methods=['GET', 'OPTIONS'])
 def health():
     """Health check endpoint"""
     return jsonify({
@@ -46,7 +58,7 @@ def health():
         'version': '1.0'
     }), 200
 
-@app.route('/api/model_info', methods=['GET'])
+@app.route('/api/model_info', methods=['GET', 'OPTIONS'])
 def model_info():
     """Get model information"""
     if predictor is None:
@@ -55,7 +67,7 @@ def model_info():
     info = predictor.get_model_info()
     return jsonify(info), 200
 
-@app.route('/api/feature_importance', methods=['GET'])
+@app.route('/api/feature_importance', methods=['GET', 'OPTIONS'])
 def feature_importance():
     """Get feature importance"""
     if predictor is None:
@@ -68,7 +80,7 @@ def feature_importance():
 # PREDICTION ENDPOINTS
 # ============================================================================
 
-@app.route('/api/predict', methods=['POST'])
+@app.route('/api/predict', methods=['POST', 'OPTIONS'])
 def predict():
     """
     Single prediction endpoint
@@ -107,7 +119,7 @@ def predict():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/batch_predict', methods=['POST'])
+@app.route('/api/batch_predict', methods=['POST', 'OPTIONS'])
 def batch_predict():
     """
     Batch prediction endpoint for multiple students
