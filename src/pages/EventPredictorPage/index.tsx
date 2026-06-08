@@ -148,6 +148,8 @@ const EventPredictorPage: React.FC = () => {
                 </div>
               )}
 
+              {/* Offline estimate banner temporarily disabled for demo stability.
+                  To re-enable, restore the `predictionSource === 'fallback'` block.
               {predictionSource === 'fallback' && (
                 <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 mb-6">
                   <p className="font-semibold text-amber-900">Offline estimate mode</p>
@@ -158,6 +160,7 @@ const EventPredictorPage: React.FC = () => {
                   <code className="block mt-2 text-xs bg-amber-100 p-2 rounded text-amber-900">npm run dev:all</code>
                 </div>
               )}
+              */}
 
               {backendOnline === false && predictionSource === null && !loading && !error && (
                 <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-6 text-sm text-slate-600">

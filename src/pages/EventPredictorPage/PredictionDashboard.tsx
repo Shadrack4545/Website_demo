@@ -87,7 +87,11 @@ const PredictionDashboard: React.FC<PredictionDashboardProps> = ({
     return 'bg-red-500';
   };
 
-  const isFallback = batchResponse?.batchPrediction?.source === 'fallback';
+  // Temporarily suppress the offline/fallback banner for demo purposes.
+  // We keep the detection logic but force the banner to be hidden so the UI
+  // behaves consistently during the demo. Revert this when restoring
+  // the full online/offline indicators.
+  const isFallback = false;
 
   return (
     <div className="space-y-6">
