@@ -219,32 +219,55 @@ export class EventAttendancePredictor {
     eventId: string
   ): Promise<SinglePrediction | null> {
     try {
-      // TODO: Replace with actual API endpoint
-      const response = await fetch('/api/ml/predict', {
+      // Call the backend single-predict endpoint (server expects snake_case keys)
+      const response = await fetch('/api/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           features: featureArray,
-          studentId,
-          eventId,
+          student_id: studentId,
+          event_id: eventId,
         }),
       });
-
       if (!response.ok) {
-        console.error('API error:', response.statusText);
+        const text = await response.text().catch(() => '');
+        console.error('API error:', response.status, response.statusText, text);
         return null;
       }
 
-      const data = await response.json();
+      // Read body as text first to avoid JSON parse errors on empty responses
+      const bodyText = await response.text();
+      if (!bodyText) {
+        console.error('Empty response body from /api/predict');
+        return null;
+      }
+
+      let data: any;
+      try {
+        data = JSON.parse(bodyText);
+      } catch (err) {
+        console.error('Failed to parse JSON from /api/predict:', err, 'body:', bodyText);
+        return null;
+      }
+
+      if (data.error) {
+        console.error('API returned error:', data.error);
+        return null;
+      }
+
+      const probability = data.attendance_probability ?? data.attendanceProbability ?? null;
+      const predicted = data.predicted_attendance ?? data.predictedAttendance ?? (probability !== null ? (probability > 0.5 ? 1 : 0) : null);
+      const confidence = data.confidence ?? Math.abs((probability ?? 0) - 0.5) * 2;
+
       return {
         studentId,
         eventId,
-        attendanceProbability: data.probability,
-        predictedAttendance: data.probability > 0.5 ? 1 : 0,
-        confidence: Math.abs(data.probability - 0.5) * 2, // Convert to 0-1 confidence
-        modelVersion: data.modelVersion || 'unknown',
+        attendanceProbability: probability ?? 0,
+        predictedAttendance: typeof predicted === 'number' ? predicted : 0,
+        confidence: confidence,
+        modelVersion: data.model_version || data.modelVersion || 'unknown',
         predictionTime: new Date(),
       };
     } catch (error) {
