@@ -31,36 +31,106 @@ class AttendancePredictor:
         self.metadata = None
         self.feature_importance = None
 
-        # Load model (fatal if it fails)
-        try:
-            print(f"Attempting to load model from: {model_path}")
-            with open(model_path, 'rb') as f:
-                self.model = pickle.load(f)
-            print(f"Loaded model from {model_path}")
-        except Exception as e:
-            print(f"Error loading model from {model_path}: {e}")
-            traceback.print_exc()
-            raise
+        # Helper: try multiple candidate paths and return the first that exists
+        def _find_existing_path(candidate: str) -> Optional[str]:
+            if not candidate:
+                return None
+            p = Path(candidate)
+            if p.exists():
+                return str(p)
+            return None
 
-        # Load metadata (non-fatal)
-        try:
-            print(f"Attempting to load metadata from: {metadata_path}")
-            with open(metadata_path, 'r') as f:
-                self.metadata = json.load(f)
-            print(f"Loaded metadata from {metadata_path}")
-        except Exception as e:
-            print(f"Error loading metadata from {metadata_path}: {e}")
-            traceback.print_exc()
+        # Build a list of sensible candidate locations (env override handled above)
+        candidates = [
+            model_path,
+            str(BASE_DIR / 'trained_model.pkl'),
+            str(BASE_DIR.parent / 'ml_backend' / 'trained_model.pkl'),
+            str(Path.cwd() / 'ml_backend' / 'trained_model.pkl'),
+            str(Path('/app') / 'ml_backend' / 'trained_model.pkl'),
+            str(Path('/app') / 'trained_model.pkl')
+        ]
 
-        # Load feature importance (non-fatal)
+        # Also scan workspace root as a last resort (fast glob, shallow)
         try:
-            print(f"Attempting to load feature importance from: {importance_path}")
-            with open(importance_path, 'r') as f:
-                self.feature_importance = json.load(f)
-            print(f"Loaded feature importance from {importance_path}")
-        except Exception as e:
-            print(f"Error loading feature importance from {importance_path}: {e}")
-            traceback.print_exc()
+            for p in Path.cwd().rglob('trained_model.pkl'):
+                candidates.append(str(p))
+                break
+        except Exception:
+            pass
+
+        # Load model (attempt candidates)
+        model_found = None
+        for cand in candidates:
+            existing = _find_existing_path(cand)
+            if existing:
+                model_found = existing
+                break
+
+        if model_found:
+            try:
+                print(f"Attempting to load model from: {model_found}")
+                with open(model_found, 'rb') as f:
+                    self.model = pickle.load(f)
+                print(f"Loaded model from {model_found}")
+            except Exception as e:
+                print(f"Error loading model from {model_found}: {e}")
+                traceback.print_exc()
+        else:
+            print(f"Model file not found. Tried candidates: {candidates}")
+
+        # Load metadata (non-fatal) - try a few candidate locations
+        metadata_candidates = [
+            metadata_path,
+            str(BASE_DIR / 'model_metadata.json'),
+            str(BASE_DIR.parent / 'ml_backend' / 'model_metadata.json'),
+            str(Path.cwd() / 'ml_backend' / 'model_metadata.json'),
+            str(Path('/app') / 'ml_backend' / 'model_metadata.json'),
+            str(Path('/app') / 'model_metadata.json')
+        ]
+        metadata_found = None
+        for cand in metadata_candidates:
+            if _find_existing_path(cand):
+                metadata_found = cand
+                break
+
+        if metadata_found:
+            try:
+                print(f"Attempting to load metadata from: {metadata_found}")
+                with open(metadata_found, 'r') as f:
+                    self.metadata = json.load(f)
+                print(f"Loaded metadata from {metadata_found}")
+            except Exception as e:
+                print(f"Error loading metadata from {metadata_found}: {e}")
+                traceback.print_exc()
+        else:
+            print(f"Model metadata not found. Tried: {metadata_candidates}")
+
+        # Load feature importance (non-fatal) - try a few candidate locations
+        importance_candidates = [
+            importance_path,
+            str(BASE_DIR / 'feature_importance.json'),
+            str(BASE_DIR.parent / 'ml_backend' / 'feature_importance.json'),
+            str(Path.cwd() / 'ml_backend' / 'feature_importance.json'),
+            str(Path('/app') / 'ml_backend' / 'feature_importance.json'),
+            str(Path('/app') / 'feature_importance.json')
+        ]
+        importance_found = None
+        for cand in importance_candidates:
+            if _find_existing_path(cand):
+                importance_found = cand
+                break
+
+        if importance_found:
+            try:
+                print(f"Attempting to load feature importance from: {importance_found}")
+                with open(importance_found, 'r') as f:
+                    self.feature_importance = json.load(f)
+                print(f"Loaded feature importance from {importance_found}")
+            except Exception as e:
+                print(f"Error loading feature importance from {importance_found}: {e}")
+                traceback.print_exc()
+        else:
+            print(f"Feature importance file not found. Tried: {importance_candidates}")
     
     def predict_single(self, features: np.ndarray) -> Dict:
         """
