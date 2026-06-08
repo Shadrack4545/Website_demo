@@ -405,12 +405,62 @@ async function makeRequest<T>(
       throw err;
     }
   } catch (error) {
+    // If this looks like a network/connectivity error, try a site-relative API
+    // before giving up. This helps when the frontend is deployed with a
+    // runtime `VITE_ML_API_URL` mismatch or when proxies route `/api` to the
+    // backend (e.g., Vite proxy in dev). We attempt one fallback and then
+    // rethrow the original error if that also fails.
     if (error instanceof MLAPIError) {
       throw error;
     }
+
+    const isNetworkError =
+      (error instanceof TypeError && error.message.includes('Failed to fetch')) ||
+      (error instanceof Error && error.message && String(error.message).toLowerCase().includes('cannot connect to ml api')) ||
+      (error instanceof Error && error.name === 'AbortError');
+
+    if (isNetworkError) {
+      try {
+        const altBase = (typeof window !== 'undefined' && window.location && window.location.origin)
+          ? `${window.location.origin}/api`
+          : '/api';
+
+        if (altBase !== FLASK_API_BASE_URL) {
+          const altUrl = `${altBase}${endpoint}`;
+          console.warn(`Primary ML API unreachable at ${url}. Trying fallback ${altUrl}`);
+
+          const altResp = await fetch(altUrl, options);
+          const altBodyText = await altResp.text().catch(() => '');
+
+          if (!altResp.ok) {
+            console.error(`Fallback ML API responded with error (${altResp.status}):`, altBodyText);
+            throw new MLAPIError(altResp.status, endpoint, altResp.statusText || 'Fallback error');
+          }
+
+          if (!altBodyText) {
+            console.warn(`Fallback ML API returned empty body for ${endpoint}`);
+            return {} as T;
+          }
+
+          try {
+            const data = JSON.parse(altBodyText);
+            console.info('ML API fallback succeeded at', altBase);
+            return data as T;
+          } catch (err) {
+            console.error('Failed to parse JSON from fallback ML API:', err, 'body:', altBodyText);
+            throw err;
+          }
+        }
+      } catch (fallbackErr) {
+        console.warn('Fallback ML API attempt failed:', fallbackErr);
+        // fall through to rethrow original error below
+      }
+    }
+
     if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
       throw new Error(`Cannot connect to ML API at ${FLASK_API_BASE_URL}. Is the backend running?`);
     }
+
     throw error;
   } finally {
     clearTimeout(timeoutId);
