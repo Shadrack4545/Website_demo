@@ -61,15 +61,18 @@ const EventAnalytics: React.FC<EventAnalyticsProps> = ({
   /**
    * Calculate statistics
    */
+  // Guard historical data to avoid runtime errors if localStorage contains unexpected values
+  const safeHistorical: HistoricalData[] = Array.isArray(historicalData) ? historicalData : [];
+
   const stats = {
     averageAccuracy:
-      historicalData.length > 0
-        ? (historicalData.reduce((sum, d) => sum + d.accuracy, 0) / historicalData.length)
+      safeHistorical.length > 0
+        ? (safeHistorical.reduce((sum, d) => sum + d.accuracy, 0) / safeHistorical.length)
         : 0,
-    totalPredictions: historicalData.length,
+    totalPredictions: safeHistorical.length,
     avgPredictionError:
-      historicalData.length > 0
-        ? (historicalData.reduce(
+      safeHistorical.length > 0
+        ? (safeHistorical.reduce(
             (sum, d) =>
               sum +
               Math.abs(
@@ -77,7 +80,7 @@ const EventAnalytics: React.FC<EventAnalyticsProps> = ({
                   d.actualAttendance
               ),
             0
-          ) / historicalData.length)
+          ) / safeHistorical.length)
         : 0
   };
 

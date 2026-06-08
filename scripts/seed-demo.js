@@ -133,4 +133,48 @@ const demo = {
 
 const snippet = `// Demo seed snippet - paste into browser console and press Enter\n(function(){\n  localStorage.clear();\n  localStorage.setItem('users', JSON.stringify(${JSON.stringify(demo.users)}));\n  localStorage.setItem('currentUser', JSON.stringify(${JSON.stringify(demo.currentUser)}));\n  localStorage.setItem('directoryMembers', JSON.stringify(${JSON.stringify(demo.directoryMembers)}));\n  localStorage.setItem('events', JSON.stringify(${JSON.stringify(demo.events)}));\n  localStorage.setItem('roleManagementState', JSON.stringify(${JSON.stringify(demo.roleManagementState)}));\n  console.log('Demo data written. Reloading...');\n  location.reload();\n})();`;
 
-console.log(snippet);
+(async () => {
+  // Try dynamic import of clipboardy first (if installed). If not available,
+  // fall back to platform clipboard utilities (`clip` on Windows, `pbcopy` on macOS, `xclip` on Linux).
+  try {
+    const { write } = await import('clipboardy');
+    await write(snippet);
+    console.log('Demo seed snippet copied to clipboard. Paste into the site Console and press Enter.');
+    return;
+  } catch (err) {
+    // ignore and try platform-specific fallback
+  }
+
+  try {
+    const { spawn } = await import('child_process');
+    const platform = process.platform;
+    let proc;
+    if (platform === 'win32') {
+      proc = spawn('cmd.exe', ['/c', 'clip']);
+    } else if (platform === 'darwin') {
+      proc = spawn('pbcopy');
+    } else {
+      // linux - try xclip (may not be installed)
+      proc = spawn('sh', ['-c', 'xclip -selection clipboard']);
+    }
+
+    if (proc && proc.stdin) {
+      proc.stdin.write(snippet);
+      proc.stdin.end();
+      proc.on('close', (code) => {
+        if (code === 0) {
+          console.log('Demo seed snippet copied to clipboard (platform fallback). Paste into the site Console and press Enter.');
+        } else {
+          console.log('Platform clipboard command failed (exit ' + code + '). Printing snippet below — copy and paste into site Console:');
+          console.log(snippet);
+        }
+      });
+      return;
+    }
+  } catch (err) {
+    // final fallback
+  }
+
+  console.log('Could not copy to clipboard automatically. Printing snippet below — copy and paste into site Console:');
+  console.log(snippet);
+})();
