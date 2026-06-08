@@ -111,11 +111,20 @@ export async function batchPredictAttendance(
     try {
       const response = await makeRequest<any>('/batch_predict', 'POST', flaskRequest);
 
+      // Defensive: make sure `predictions` is an array before calling filter/map.
+      const rawPredictions = Array.isArray(response?.predictions) ? response.predictions : [];
+
+      // If we received no predictions from the backend, treat this as a fallback
+      // or an empty result rather than letting the UI crash.
+      if (rawPredictions.length === 0) {
+        console.warn('Batch predict returned no predictions; returning empty batchPrediction.');
+      }
+
       return {
         success: true,
         batchPrediction: {
-          eventId: response.event_id,
-          predictions: response.predictions
+          eventId: response?.event_id,
+          predictions: rawPredictions
             .filter((pred: { error?: string }) => !pred.error)
             .map((pred: {
               student_id: string;
@@ -124,7 +133,7 @@ export async function batchPredictAttendance(
               confidence: string;
             }) => ({
               studentId: pred.student_id,
-              eventId: response.event_id,
+              eventId: response?.event_id,
               attendanceProbability: pred.attendance_probability,
               predictedAttendance: pred.predicted_attendance,
               confidence: confidenceLabelToScore(pred.confidence, pred.attendance_probability),
@@ -132,11 +141,11 @@ export async function batchPredictAttendance(
               modelVersion: '1.0',
               predictionTime: new Date(),
             })),
-          predictedTotalAttendance: response.predicted_attendees,
-          predictedAttendanceRate: (response.predicted_attendance_rate ?? 0) / 100,
-          batchTime: response.batch_time || new Date().toISOString(),
+          predictedTotalAttendance: response?.predicted_attendees,
+          predictedAttendanceRate: (response?.predicted_attendance_rate ?? 0) / 100,
+          batchTime: response?.batch_time || new Date().toISOString(),
           modelVersion: '1.0',
-          source: 'xgboost',
+          source: rawPredictions.length > 0 ? 'xgboost' : 'fallback',
         },
       };
     } catch (apiError) {
