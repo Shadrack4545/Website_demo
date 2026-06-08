@@ -29,6 +29,10 @@ def init_predictor():
         print(f"Failed to initialize predictor: {e}")
         return False
 
+# Ensure predictor is initialized when the module is imported (works under gunicorn)
+if not init_predictor():
+    print("Warning: predictor failed to initialize at import time. It will be initialized on first request if possible.")
+
 # ============================================================================
 # HEALTH & INFO ENDPOINTS
 # ============================================================================
