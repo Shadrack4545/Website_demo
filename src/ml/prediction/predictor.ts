@@ -261,11 +261,22 @@ export class EventAttendancePredictor {
       const predicted = data.predicted_attendance ?? data.predictedAttendance ?? (probability !== null ? (probability > 0.5 ? 1 : 0) : null);
       const confidence = data.confidence ?? Math.abs((probability ?? 0) - 0.5) * 2;
 
+      // Normalize predictedAttendance to the union type 0 | 1 to satisfy TS types
+      const predictedAttendanceNormalized: 0 | 1 = ((): 0 | 1 => {
+        if (typeof predicted === 'number') {
+          return predicted === 1 ? 1 : 0;
+        }
+        if (typeof probability === 'number') {
+          return probability > 0.5 ? 1 : 0;
+        }
+        return 0;
+      })();
+
       return {
         studentId,
         eventId,
         attendanceProbability: probability ?? 0,
-        predictedAttendance: typeof predicted === 'number' ? predicted : 0,
+        predictedAttendance: predictedAttendanceNormalized,
         confidence: confidence,
         modelVersion: data.model_version || data.modelVersion || 'unknown',
         predictionTime: new Date(),
